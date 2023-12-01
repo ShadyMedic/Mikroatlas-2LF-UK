@@ -1,0 +1,18 @@
+<h1>Procházení mikroorganismů</h1>
+<?php if (isset($browse_folder)) : ?>
+    <p>Kategorie: <code><?= $browse_folder ?></code></p>
+<?php endif ?>
+
+<h2>Podkategorie</h2>
+<ul>
+    <?php foreach ($browse_categories as $category) : ?>
+        <li><a href="<?= $category->url ?>"><?= $category->name ?></a></li> <!-- TODO - use the icon link -->
+    <?php endforeach ?>
+</ul>
+
+<h2>Mikroorganismy v této kategorii</h2>
+<ul>
+    <?php foreach ($browse_microbes as $microbe) : ?>
+        <li><a href="/microorganism/<?= $microbe->url ?>"><?= $microbe->name ?></a></li>
+    <?php endforeach ?>
+</ul>

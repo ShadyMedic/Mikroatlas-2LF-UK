@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php foreach (self::$cssFiles as $cssFile) : ?>
+        <link rel="stylesheet" href="/public/css/<?= $cssFile ?>.css">
+    <?php endforeach ?>
+    <?php foreach (self::$jsFiles as $jsFile) : ?>
+        <script type="text/javascript" src="/public/js/<?= $jsFile ?>.js"></script>
+    <?php endforeach ?>
+    <title>Mikrobiologický Atlas 2.LF</title>
+</head>
+<body data-page-id="<?=
+    /** @var string $layout_page_id ID of the generated webpage, initialized in the specific controller */
+    $layout_page_id
+?>">
+<nav>
+    <span class="nav-row">
+        <a id="home-link" href="/" class="nav-item">Homepage</a>
+        <a id="browse-link" href="/browse" class="nav-item">Prohlížet</a>
+    </span>
+    <span class="nav-row">
+        <a id="login-link" href="/login" class="nav-item">Přihlásit se</a>
+        <a id="signup-link" href="signup" class="nav-item">Zaregistrovat se</a>
+    </span>
+</nav>
+<main>
+    <header>
+        <h1><?=
+            /** @var string $layout_title Title of the webpage, initialized in the specific controller */
+            $layout_title
+        ?></h1>
+    </header>
+    <article>
+        <?php require self::VIEWS_DIRECTORY.'/'.array_shift(self::$views).'.phtml'; ?>
+    </article>
+</main>
+</body>
+</html>
+
