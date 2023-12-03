@@ -46,10 +46,20 @@ class MetadataManager
 
                 switch ($typeName) {
                     case 'image':
-                        $htmlValue = '<img src="'.$value['mdvalimage_value'].'" />';
+                        $htmlValue = '<img src="'.$value['mdvalimage_value'].'" 
+                        width="'.($value['mdvalimage_width'] ?? 'auto').'"
+                        height="'.($value['mdvalimage_height'] ?? 'auto').'"
+                        '.($value['mdvalimage_allowinvert'] ? ' class="dark-mode-invert"' : '').'
+                    />';
                         break;
                     case 'video':
-                        //TODO
+                        $htmlValue = '<video
+                        width="'.($value['mdvalvideo_width'] ?? 'auto').'"
+                        height="'.($value['mdvalvideo_height'] ?? 'auto').'"
+                        '.($value['mdvalvideo_mute'] ? ' muted' : '')
+                            .($value['mdvalvideo_controls'] ? ' controls' : '')
+                            .($value['mdvalvideo_autoplay'] ? ' autoplay' : '').
+                            '><source src="'.$value['mdvalvideo_value'].'" type="'.$value['mdvalvideo_type'].'"></video>';
                         break;
                     case 'link':
                         $htmlValue = '<a href="'.$value['mdvallink_value'].'" target="'.$value['mdvallink_targetmode'].'" />Odkaz</a>';
@@ -113,10 +123,20 @@ class MetadataManager
 
             switch ($typeName) {
                 case 'image':
-                    $htmlValue = '<img src="'.$value['mdvalimage_value'].'" />';
+                    $htmlValue = '<img src="'.$value['mdvalimage_value'].'" 
+                        width="'.($value['mdvalimage_width'] ?? 'auto').'"
+                        height="'.($value['mdvalimage_height'] ?? 'auto').'"
+                        '.($value['mdvalimage_allowinvert'] ? ' class="dark-mode-invert"' : '').'
+                    />';
                     break;
                 case 'video':
-                    //TODO
+                    $htmlValue = '<video
+                        width="'.($value['mdvalvideo_width'] ?? 'auto').'"
+                        height="'.($value['mdvalvideo_height'] ?? 'auto').'"
+                        '.($value['mdvalvideo_mute'] ? ' muted' : '')
+                        .($value['mdvalvideo_controls'] ? ' controls' : '')
+                        .($value['mdvalvideo_autoplay'] ? ' autoplay' : '').
+                        '><source src="'.$value['mdvalvideo_value'].'" type="'.$value['mdvalvideo_type'].'"></video>';
                     break;
                 case 'link':
                     $htmlValue = '<a href="'.$value['mdvallink_value'].'" target="'.$value['mdvallink_targetmode'].'" />Odkaz</a>';
