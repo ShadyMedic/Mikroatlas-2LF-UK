@@ -1,6 +1,9 @@
 body {
     margin: 0;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 nav {
@@ -77,6 +80,7 @@ main {
     width: 50%;
     min-width: 600px;
     margin: auto;
+    margin-top: 0;
     position: relative;
 }
 
@@ -86,6 +90,16 @@ main {
         width: unset;
         min-width: unset;
     }
+}
+
+footer {
+    margin-top: auto;
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .txt-l {

@@ -9,7 +9,7 @@ RewriteBase /
 RewriteCond %{REQUEST_URI} !^/robots\.txt
 
 # Povolení přímého přístupu k souborům s danými příponami
-RewriteRule !\.(css|js|txt|ico|svg|gif|png|jpg|gz)$ index.php [L]
+RewriteRule !\.(css|js|txt|ico|svg|gif|png|jpg|jpeg|gz)$ index.php [L]
 
 # Nastavení .phtml souborů jako .php soubory
 AddType application/x-httpd-php .php .phtml

@@ -40,7 +40,11 @@ function fatalExceptionHandler(Throwable $e) : void
     $errorCode = $e->getCode();
     $errorMsg = $e->getMessage();
     $errProc = new ErrorProcessor();
-    $errorFound = $errProc->processError($errorCode, $errorMsg);
+    if (!$e instanceof \PDOException) {
+        $errorFound = $errProc->processError($errorCode, $errorMsg);
+    } else {
+        $errorFound = false;
+    }
 
     if (!$errorFound) {
         //Unknown error – just display it hard TURN THIS OFF ON PRODUCTION

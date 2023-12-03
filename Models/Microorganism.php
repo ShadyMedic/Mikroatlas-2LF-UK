@@ -50,7 +50,15 @@ class Microorganism implements DatabaseRecord, Sanitizable
 
     public function load(int $id): bool
     {
-        throw new \BadMethodCallException('Method '.__METHOD__.' in class '.self::class.' is not implemented.', 501007);
+        $db = Db::connect();
+        $statement = $db->prepare('SELECT * FROM microorganism WHERE micor_id = ? LIMIT 1');
+        $result = $statement->execute([$this->id]);
+        if ($result === false) {
+            throw new \RuntimeException('Database query wasn\'t completed successfully');
+        }
+        $this->__construct($statement->fetch(\PDO::FETCH_ASSOC));
+
+        return $result;
     }
 
     public function delete(): bool
@@ -60,6 +68,26 @@ class Microorganism implements DatabaseRecord, Sanitizable
 
     public function sanitize(): void
     {
-        // TODO: Implement sanitize() method.
+        $this->latinName = htmlspecialchars($this->latinName, ENT_QUOTES);
+        $this->czechName = htmlspecialchars($this->czechName, ENT_QUOTES);
+        $this->url = htmlspecialchars($this->url, ENT_QUOTES);
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function loadIdFromUrl(): void
+    {
+        $db = Db::connect();
+        $statement = $db->prepare('SELECT micor_id FROM microorganism WHERE micor_url = ? LIMIT 1;');
+        $result = $statement->execute([$this->url]);
+        if ($result === false) {
+            throw new \RuntimeException('Database query wasn\'t completed successfully');
+        }
+
+        $this->id = $statement->fetchColumn();
     }
 }
+

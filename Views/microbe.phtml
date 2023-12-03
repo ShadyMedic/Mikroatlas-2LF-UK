@@ -1,0 +1,25 @@
+<!-- <img src="<= /* $microbe_img */ ?>" class="main-img" /> -->
+<?php /*print_r($microbe_metadata);*/ ?>
+
+<h2>Informace o mikrobovi</h2>
+<table class="striped-table">
+    <?php foreach ($microbe_metadata as $metadataEntry) : ?>
+        <tr>
+            <td><b><?= $metadataEntry['key'] ?></b></td>
+            <td>
+                <?php if ($metadataEntry['isObject']) : ?>
+                    <table class="striped-table">
+                        <?php foreach ($metadataEntry['value'] as $attribute) : ?>
+                            <tr>
+                                <td><b><?= $attribute['key'] ?></b></td>
+                                <td><?= $attribute['value'] ?></td>
+                            </tr>
+                        <?php endforeach ?>
+                    </table>
+                <?php else : ?>
+                    <?= $metadataEntry['value'] ?>
+                <?php endif ?>
+            </td>
+        </tr>
+    <?php endforeach ?>
+</table>
