@@ -1,18 +1,40 @@
 <h1>Procházení mikroorganismů</h1>
 <?php if (isset($browse_folder)) : ?>
-    <p>Kategorie: <code><?= $browse_folder ?></code></p>
+    <p>
+        Kategorie:
+        <?php for ($i = 0; $i < count($browse_folder); $i++) : ?>
+            <ul class="hierarchy-list">
+                <li>
+                    <a href="<?= ($i === 0) ? '/browse/' : str_repeat('../', count($browse_folder) - $i) ?>">
+                        <?= $browse_folder[$i] ?>
+                    </a>
+                </li>
+        <?php endfor ?>
+        <?php for ($i = 0; $i < count($browse_folder); $i++) : ?>
+            </ul>
+        <?php endfor ?>
+    </p>
 <?php endif ?>
 
 <h2>Podkategorie</h2>
-<ul>
-    <?php foreach ($browse_categories as $category) : ?>
-        <li><a href="<?= $category->url ?>"><?= $category->name ?></a></li> <!-- TODO - use the icon link -->
-    <?php endforeach ?>
-</ul>
+<?php if (empty($browse_categories)) : ?>
+    <div><i>Žádné podkategorie</i></div>
+<?php else : ?>
+    <ul>
+        <?php foreach ($browse_categories as $category) : ?>
+            <li><a href="<?= (count($browse_folder) > 1 ? '' : '/').$category->url ?>/"><?= $category->name ?></a></li> <!-- TODO - use the icon link -->
+        <?php endforeach ?>
+    </ul>
+<?php endif ?>
 
 <h2>Mikroorganismy v této kategorii</h2>
-<ul>
-    <?php foreach ($browse_microbes as $microbe) : ?>
-        <li><a href="/microorganism/<?= $microbe->url ?>"><?= $microbe->name ?></a></li>
-    <?php endforeach ?>
-</ul>
+<?php if (empty($browse_microbes)) : ?>
+    <div><i>Žádné podkategorie</i></div>
+<?php else : ?>
+    <ul>
+        <?php foreach ($browse_microbes as $microbe) : ?>
+            <li><a href="/mikrob/<?= $microbe->url ?>"><?= $microbe->name ?></a></li>
+        <?php endforeach ?>
+    </ul>
+<?php endif ?>
+

@@ -9,9 +9,9 @@ class Microorganism implements DatabaseRecord, Sanitizable
 {
     private int $id;
     public string $latinName;
-    public string $czechName;
+    public ?string $czechName;
     public string $url;
-    public int $category; //ID of the category
+    public ?int $category; //ID of the category
 
     public function __construct(array $dbData) {
         foreach ($dbData as $key => $value)
@@ -24,7 +24,7 @@ class Microorganism implements DatabaseRecord, Sanitizable
                     $this->name = $value;
                     break;
                 case 'micor_czechname':
-                    $this->url = $value;
+                    $this->czechName = $value;
                     break;
                 case 'micor_url':
                     $this->url = $value;
