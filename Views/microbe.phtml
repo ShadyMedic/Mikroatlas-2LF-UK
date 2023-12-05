@@ -1,6 +1,3 @@
-<!-- <img src="<= /* $microbe_img */ ?>" class="main-img" /> -->
-<?php /*print_r($microbe_metadata);*/ ?>
-
 <h2>Informace o mikrobovi</h2>
 <table class="striped-table">
     <?php foreach ($microbe_metadata as $metadataEntry) : ?>
@@ -23,3 +20,16 @@
         </tr>
     <?php endforeach ?>
 </table>
+
+<button id="new-metadata-button">Přidat metadata</button>
+<form id="new-metadata-form" class="hidden">
+    <h3>Přidat metadata</h3>
+    <label for="new-metadata-key">Typ informace</label>
+    <select id="new-metadata-key">
+        <option disabled selected>Loading...</option>
+    </select>
+    <div id="new-metadata-value">
+        <!-- Filled in by JavaScript -->
+    </div>
+</form>
+<div class="hidden" id="data-holder" data-microbe-id="<?= $microbe_id ?>"></div>

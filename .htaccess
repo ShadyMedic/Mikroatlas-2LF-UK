@@ -44,3 +44,4 @@ ErrorDocument 404 /Views/errors/404.phtml
 ErrorDocument 406 /Views/errors/406.phtml
 ErrorDocument 410 /Views/errors/410.phtml
 ErrorDocument 500 /Views/errors/500.phtml
+ErrorDocument 501 /Views/errors/501.phtml

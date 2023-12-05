@@ -2,9 +2,9 @@
 
 namespace Mikroatlas\Controllers;
 
+use InvalidArgumentException;
 use Mikroatlas\Models\Sanitizable;
 use Mikroatlas\Models\UserException;
-use InvalidArgumentException;
 
 /**
  * Abstract class that all controllers need to extend
@@ -14,6 +14,13 @@ abstract class Controller
 {
     public const VIEWS_DIRECTORY = 'Views';
     protected const CONTROLLERS_DIRECTORY = 'Controllers';
+
+    /**
+     * @var bool $isApiRequest
+     * If set to true in the specific controller class, all rendering will be skipped in the generate method.
+     * This is useful when the specific controller itself takes care of outputting data.
+     */
+    protected static bool $isApiRequest = false;
 
     /**
      * @var array $data
@@ -76,6 +83,10 @@ abstract class Controller
      */
     public function generate(): bool
     {
+        if (self::$isApiRequest) {
+            return true;
+        }
+
         $this->unpackViewData();
         return true;
     }
@@ -96,8 +107,7 @@ abstract class Controller
                 if (ord($key[0]) <= 90 && ord($key[0]) >= 65) { //Uppercase letters
                     $sanitizedValue = $this->antiXssSanitizazion($value);
                     $sanitizedValueName = $viewName.'_'.strtolower($key[0]).substr($key, 1); //Convert key name to camelCase
-                }
-                else {
+                } else {
                     $sanitizedValue = $value;
                     $sanitizedValueName = $viewName.'_'.$key; //Convert key name to camelCase
                 }

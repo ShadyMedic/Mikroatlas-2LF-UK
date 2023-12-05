@@ -33,12 +33,14 @@ class Router extends Controller
         self::$cssFiles[] = 'layout';
         self::$jsFiles[] = 'layout';
 
-        $variables = array();
+        $variables = array(); //Variable arguments provided in the URL
+        $parameters = array(); //Order of the arguments that needs to be passed to the controller
         $pathTemplate = $this->separateUrlVariables($urlPath, $variables);
-        $controllerName = $this->loadRoutes($pathTemplate);
+        $controllerName = $this->loadRoutes($pathTemplate, $parameters);
+        $arguments = $this->fillInArguments($variables, $parameters);
         $nextControllerName = 'Mikroatlas\\'.self::CONTROLLERS_DIRECTORY.'\\'.$controllerName;
         $nextController = new $nextControllerName();
-        return $nextController->process($variables);
+        return $nextController->process($arguments);
     }
 
     /**
@@ -60,7 +62,7 @@ class Router extends Controller
         }
 
         $iniRoutes = parse_ini_file(self::ROUTES_INI_FILE, true);
-        $controllersUrls = array_keys($iniRoutes['Controllers']);
+        $controllersUrls = array_keys($iniRoutes['Keywords']);
         $urlVariablesArr = array_diff($urlArguments, $controllersUrls); //Array of URL parameters only
         $urlVariablesPositions = array_keys($urlVariablesArr);
         $urlVariablesValues = array_values($urlVariablesArr);
@@ -77,15 +79,33 @@ class Router extends Controller
     /**
      * Method loading the routes.ini file and searching for the correct controller to use, depending on the parameter
      * @param string $path The URL path of the request (used to search for the controller to use)
+     * @param array $arguments An array that will be filled with the parameters for the controller, with placeholders for variable arguments
      * @return string Name of the controller to call (not the full class name)
      */
-    private function loadRoutes(string $path): string
+    private function loadRoutes(string $path, array &$arguments): string
     {
         $routes = parse_ini_file('routes.ini', true);
         if (!isset($routes["Routes"][$path])) {
             throw new UnexpectedValueException("The given URL wasn't found in the configuration.", 404000);
         }
-        return $routes["Routes"][$path];
+        $controllerWithArgumentsPlaceholder = $routes["Routes"][$path];
+        $controllerName = explode('?', $controllerWithArgumentsPlaceholder)[0];
+        $arguments = explode(',', explode('?', $controllerWithArgumentsPlaceholder)[1]);
+
+        return $controllerName;
+    }
+
+    private function fillInArguments(array $variables, array $parameters)
+    {
+        $result = [];
+        foreach ($parameters as $parameter) {
+            if (preg_match('/<\d*>/', $parameter)) {
+                $result[] = array_shift($variables);
+            } else {
+                $result[] = $parameter;
+            }
+        }
+        return $result;
     }
 }
 

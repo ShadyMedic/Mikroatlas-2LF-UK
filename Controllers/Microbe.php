@@ -24,12 +24,13 @@ class Microbe extends Controller
 
         $metaManager = new MetadataManager();
 
+        self::$data['microbe']['id'] = $microbe->getId();
         self::$data['microbe']['name'] = $microbe->name;
         // self::$data['microbe']['img'] = '$microbe_img';
         self::$data['microbe']['metadata'] = $metaManager->loadAllMetadata($microbe->getId());
 
         self::$views[] = 'microbe';
-        // self::$cssFiles[] = 'microbe';
+        self::$jsFiles[] = 'microbe';
 
         return 200;
     }

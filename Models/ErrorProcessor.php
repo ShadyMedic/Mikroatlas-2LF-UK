@@ -44,49 +44,69 @@ class ErrorProcessor
                 //Bad request
                 $this->httpHeaderCode = 400;
                 $this->httpHeaderMessage = 'Bad Request';
-                //No errors yet
+                switch ($errorCode) {
                     case 400000:
-                        break;
+                        $this->errorWebpageView = "errors/error500";
+                        return true;
+                    case 400001:
+                        //No microbe ID provided for API request to load metadata keys that are used by it
+                        $this->errorWebpageData['errorMessage'] = $errorMessage;
+                        return true;
+                    case 400002:
+                        //Invalid action type provided for the Metadata API controller
+                        $this->errorWebpageData['errorMessage'] = $errorMessage;
+                        return true;
+                }
                 break;
             case 401:
                 //Unauthorized
                 $this->httpHeaderCode = 401;
                 $this->httpHeaderMessage = 'Unauthorized';
-                //No errors yet
+                switch ($errorCode) {
+                    //No errors yet
                     case 401000:
                         break;
+                }
                 break;
             case 403:
                 //Forbidden
                 $this->httpHeaderCode = 403;
                 $this->httpHeaderMessage = 'Forbidden';
-                //No errors yet
+                switch ($errorCode) {
+                    //No errors yet
                     case 403000:
                         break;
+                }
                 break;
             case 404:
                 //Not found
                 $this->httpHeaderCode = 404;
                 $this->httpHeaderMessage = 'Not Found';
-                //No errors yet
+                switch ($errorCode) {
+                    //No errors yet
                     case 404000:
                         break;
+                }
                 break;
             case 406:
                 //Not acceptable
                 $this->httpHeaderCode = 406;
                 $this->httpHeaderMessage = 'Not Acceptable';
-                //No errors yet
+                switch ($errorCode) {
+                    //No errors yet
                     case 406000:
                         break;
+                }
                 break;
             case 410:
                 //Gone
                 $this->httpHeaderCode = 410;
                 $this->httpHeaderMessage = 'Gone';
-                //No errors yet
+                switch ($errorCode) {
+                    //No errors yet
                     case 410000:
                         break;
+                }
                 break;
             case 500:
                 //Internal server error

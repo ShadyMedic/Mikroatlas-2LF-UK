@@ -6,14 +6,18 @@
     <?php foreach (self::$cssFiles as $cssFile) : ?>
         <link rel="stylesheet" href="/public/css/<?= $cssFile ?>.css">
     <?php endforeach ?>
+    <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
     <?php foreach (self::$jsFiles as $jsFile) : ?>
         <script type="text/javascript" src="/public/js/<?= $jsFile ?>.js"></script>
     <?php endforeach ?>
     <title>Mikrobiologický Atlas 2.LF</title>
 </head>
 <body data-page-id="<?=
-    /** @var string $layout_page_id ID of the generated webpage, initialized in the specific controller */
-    $layout_page_id
+/** @var string $layout_page_id ID of the generated webpage, initialized in the specific controller */
+$layout_page_id
 ?>">
 <nav>
     <span class="nav-row">
@@ -30,7 +34,7 @@
         <h1><?=
             /** @var string $layout_title Title of the webpage, initialized in the specific controller */
             $layout_title
-        ?></h1>
+            ?></h1>
     </header>
     <article>
         <?php require self::VIEWS_DIRECTORY.'/'.array_shift(self::$views).'.phtml'; ?>
@@ -38,7 +42,9 @@
 </main>
 <footer>
     <div>Naprogramoval <a href="https://github.com/ShadyMedic" target="_blank">Jan Štěch</a> v roce 2023.</div>
-    <div>Veškerý obsah tohoto webu je aktuálně chráněn autorským právem a není možné jej bez výslovného souhlasu kopírovat.</div>
+    <div>Veškerý obsah tohoto webu je aktuálně chráněn autorským právem a není možné jej bez výslovného souhlasu
+        kopírovat.
+    </div>
 </footer>
 </body>
 </html>
