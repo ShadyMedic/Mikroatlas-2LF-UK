@@ -90,7 +90,11 @@ class Router extends Controller
         }
         $controllerWithArgumentsPlaceholder = $routes["Routes"][$path];
         $controllerName = explode('?', $controllerWithArgumentsPlaceholder)[0];
-        $arguments = explode(',', explode('?', $controllerWithArgumentsPlaceholder)[1]);
+        if (isset(explode('?', $controllerWithArgumentsPlaceholder)[1])) {
+            $arguments = explode(',', explode('?', $controllerWithArgumentsPlaceholder)[1]);
+        } else {
+            $arguments = [];
+        }
 
         return $controllerName;
     }

@@ -44,22 +44,13 @@ class Metadata extends Controller
 
     private function loadValueStructure(array $args) : array
     {
-        //TODO do one of the following:
-        /*
-            1. Datatype is primitive? Return [0 => [type => 'text/int/float/url/file', maxlength => 127 OR filetype => 'jpg/...']]
-            2. Datatype is enum? Return [0 => [type => 'select', options => ['Positive', 'Negative']]]
-            3. Datatype is object? Return [
-                0 => [type => 'text/int/float/url/file', maxlength => 127 OR filetype => 'jpg/...'],
-                1 => [type => 'select', options => ['Positive', 'Negative']],
-                2 => [
-                    0 => [type => 'text/int/float/url/file', maxlength => 127 OR filetype => 'jpg/...'],
-                    1 => [type => 'select', options => ['Positive', 'Negative']],
-                    //etc nested objects
-                ]
-                //etc more attributes
-            ]
-        */
+        $keyId = array_shift($args);
 
-        return [];
+        if (is_null($keyId)) {
+            throw new \InvalidArgumentException('No metadata key ID provided.', 400003);
+        }
+
+        $metaManager = new MetadataManager();
+        return $metaManager->loadValueStructure($keyId);
     }
 }
