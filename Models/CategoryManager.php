@@ -11,10 +11,10 @@ class CategoryManager
         $db = Db::connect();
         $parameters = [];
         if (!is_null($categoryId)) {
-            $statement = $db->prepare('SELECT cat_id, cat_name, cat_url, cat_icon FROM category WHERE cat_parent = ?');
+            $statement = $db->prepare('SELECT micorcat_id, micorcat_name, micorcat_url, micorcat_icon FROM microorganism_category WHERE micorcat_parent = ?');
             $parameters[] = $categoryId;
         } else {
-            $statement = $db->prepare('SELECT cat_id, cat_name, cat_url, cat_icon FROM category WHERE cat_parent IS NULL');
+            $statement = $db->prepare('SELECT micorcat_id, micorcat_name, micorcat_url, micorcat_icon FROM microorganism_category WHERE micorcat_parent IS NULL');
         }
 
         $result = $statement->execute($parameters);
@@ -53,7 +53,7 @@ class CategoryManager
         array_unshift($categoryUrlPath, 'browse');
         $query = '';
         for ($i = 0; $i < count($categoryUrlPath); $i++) {
-            $queryTemp = 'SELECT cat_id FROM category WHERE cat_url = ? AND cat_parent ';
+            $queryTemp = 'SELECT micorcat_id FROM microorganism_category WHERE micorcat_url = ? AND micorcat_parent ';
             if ($i === 0) {
                 $queryTemp .= 'IS NULL';
             } else {
@@ -79,15 +79,15 @@ class CategoryManager
         //SQL query by BingAI
         $statement = $db->prepare('
             WITH RECURSIVE category_path AS (
-                SELECT cat_name, cat_url, cat_parent
-                FROM category
-                WHERE cat_id = ?
+                SELECT micorcat_name, micorcat_url, micorcat_parent
+                FROM microorganism_category
+                WHERE micorcat_id = ?
                 UNION ALL
-                SELECT c.cat_name, c.cat_url, c.cat_parent
+                SELECT c.micorcat_name, c.micorcat_url, c.micorcat_parent
                 FROM category_path cp
-                JOIN category c ON cp.cat_parent = c.cat_id
+                JOIN microorganism_category c ON cp.micorcat_parent = c.micorcat_id
             )
-            SELECT cat_name, cat_url FROM category_path;
+            SELECT micorcat_name, micorcat_url FROM category_path;
         ');
         $result = $statement->execute([$currentCategoryId]);
         if ($result === false) {

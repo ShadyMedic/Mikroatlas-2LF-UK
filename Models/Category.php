@@ -16,19 +16,19 @@ class Category implements DatabaseRecord
         foreach ($dbData as $key => $value)
         {
             switch ($key) {
-                case 'cat_id':
+                case 'micorcat_id':
                     $this->id = $value;
                     break;
-                case 'cat_name':
+                case 'micorcat_name':
                     $this->name = $value;
                     break;
-                case 'cat_url':
+                case 'micorcat_url':
                     $this->url = $value;
                     break;
-                case 'cat_parent':
+                case 'micorcat_parent':
                     $this->parent = $value;
                     break;
-                case 'cat_icon':
+                case 'micorcat_icon':
                     $this->icon = $value;
                     break;
                 default:

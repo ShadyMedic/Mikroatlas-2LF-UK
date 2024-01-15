@@ -13,16 +13,16 @@ class MetadataManager
             SELECT
                 mdkey_name AS \'key\',
                 COALESCE(mdtype_valuetable, mdenum_optiontable) AS \'valueTable\',
-                micormd_valueid AS \'valueId\',
+                mdvalue_valueid AS \'valueId\',
                 COALESCE(mdtype_name, mdenum_name, mdobject_name) AS \'typeName\',
                 mdkey_objectId AS \'objectId\'
             FROM metadata_value
-            JOIN metadata_key ON metadata_value.micormd_key = metadata_key.mdkey_id
+            JOIN metadata_key ON metadata_value.mdvalue_key = metadata_key.mdkey_id
             LEFT JOIN metadata_type ON mdkey_typeid = mdtype_id
             LEFT JOIN metadata_enum ON mdkey_enumid = mdenum_id
             LEFT JOIN metadata_object ON mdkey_objectid = mdobject_id
-            LEFT JOIN metadata_value_object ON mdkey_datatype = \'object\' AND micormd_valueid = mdvalobject_id
-            WHERE '.($isObject ? 'micormd_object' : 'micormd_microorganism').'= ? AND mdkey_hidden = FALSE;
+            LEFT JOIN metadata_value_object ON mdkey_datatype = \'object\' AND mdvalue_valueid = mdvalobject_id
+            WHERE '.($isObject ? 'mdvalue_object' : 'mdvalue_microorganism').'= ? AND mdkey_hidden = FALSE;
         ');
         $statement->execute([$id]);
 
@@ -114,7 +114,7 @@ class MetadataManager
                 FROM metadata_key
                 LEFT JOIN metadata_type ON metadata_type.mdtype_id = metadata_key.mdkey_typeid
                 WHERE mdkey_disabled = FALSE AND mdkey_isattribute = FALSE AND mdkey_id NOT IN (
-                    SELECT micormd_key FROM metadata_value WHERE micormd_microorganism = ?
+                    SELECT mdvalue_key FROM metadata_value WHERE mdvalue_microorganism = ?
                 );
             ';
             $parameters = [$avoidDuplicatesFromMicrobeId];
