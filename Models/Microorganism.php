@@ -21,7 +21,7 @@ class Microorganism implements DatabaseRecord, Sanitizable
                     $this->id = $value;
                     break;
                 case 'micor_latinname':
-                    $this->name = $value;
+                    $this->latinName = $value;
                     break;
                 case 'micor_czechname':
                     $this->czechName = $value;

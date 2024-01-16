@@ -19,13 +19,13 @@ class Microbe extends Controller
         $microbe->loadIdFromUrl();
         $microbe->load($microbe->getId());
 
-        self::$data['layout']['title'] = $microbe->name;
+        self::$data['layout']['title'] = $microbe->latinName;
         self::$data['layout']['page_id'] = 'microbe';
 
         $metaManager = new MetadataManager();
 
         self::$data['microbe']['id'] = $microbe->getId();
-        self::$data['microbe']['name'] = $microbe->name;
+        self::$data['microbe']['name'] = $microbe->latinName;
         // self::$data['microbe']['img'] = '$microbe_img';
         self::$data['microbe']['metadata'] = $metaManager->loadAllMetadata($microbe->getId());
 
