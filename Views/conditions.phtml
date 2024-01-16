@@ -1,0 +1,64 @@
+<h1>Procházení onemocnění</h1>
+<?php if (isset($conditions_folder)) : ?>
+    <p>
+        Kategorie:
+        <?php for ($i = 0; $i < count($conditions_folder); $i++) : ?>
+            <ul class="hierarchy-list">
+                <li>
+                    <a href="<?= ($i === 0) ? '/onemocneni/' : str_repeat('../', count($conditions_folder) - ($i + 1)) ?>">
+                        <?= $conditions_folder[$i]['con_name'] ?>
+                    </a>
+                </li>
+        <?php endfor ?>
+        <?php for ($i = 0; $i < count($conditions_folder); $i++) : ?>
+            </ul>
+        <?php endfor ?>
+    </p>
+<?php endif ?>
+
+<?php if (!empty($conditions_categories)) : ?>
+    <h2>Podkategorie</h2>
+    <ul>
+        <?php foreach ($conditions_categories as $category) : ?>
+            <li><a href="<?= $category->url ?>/"><?= $category->name ?></a></li> <!-- TODO - use the icon link -->
+        <?php endforeach ?>
+    </ul>
+<?php endif ?>
+
+<?php if (!empty($conditions_metadata)) : ?>
+    <h2>Informace o onemocnění</h2>
+    <table class="striped-table">
+        <?php foreach ($conditions_metadata as $metadataEntry) : ?>
+            <tr>
+                <td><b><?= $metadataEntry['key'] ?></b></td>
+                <td>
+                    <?php if ($metadataEntry['isObject']) : ?>
+                        <table class="striped-table">
+                            <?php foreach ($metadataEntry['value'] as $attribute) : ?>
+                                <tr>
+                                    <td><b><?= $attribute['key'] ?></b></td>
+                                    <td><?= $attribute['value'] ?></td>
+                                </tr>
+                            <?php endforeach ?>
+                        </table>
+                    <?php else : ?>
+                        <?= $metadataEntry['value'] ?>
+                    <?php endif ?>
+                </td>
+            </tr>
+        <?php endforeach ?>
+        <?php if (!empty($conditions_microbes)) : ?>
+            <tr><td colspan="2">&nbsp;</td></tr>
+            <tr><td colspan="2"><b>Způsobováno následujícími patogeny</b></td></tr>
+            <?php foreach($conditions_microbes as $microbe) : ?>
+                <tr><td colspan="2">
+                        <a href="/mikrob/<?= $microbe->url ?>">
+                            <?= $microbe->latinName ?>
+                            <?php if (!empty($microbe->czechName)) : ?>(<?= $microbe->czechName ?>)<?php endif ?>
+                        </a>
+                    </td></tr>
+            <?php endforeach ?>
+        <?php endif ?>
+    </table>
+<?php endif ?>
+

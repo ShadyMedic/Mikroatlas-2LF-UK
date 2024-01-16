@@ -4,7 +4,7 @@ namespace Mikroatlas\Models;
 
 use Mikroatlas\Models\DatabaseRecord;
 
-class Category implements DatabaseRecord
+class MicrobeCategory implements DatabaseRecord
 {
     private int $id;
     public string $name;
@@ -32,7 +32,7 @@ class Category implements DatabaseRecord
                     $this->icon = $value;
                     break;
                 default:
-                    throw new \RuntimeException("Unknown field $key passed to Category::__construct().");
+                    throw new \RuntimeException("Unknown field $key passed to MicrobeCategory::__construct().");
             }
         }
     }

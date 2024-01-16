@@ -2,9 +2,10 @@
 
 namespace Mikroatlas\Controllers;
 
+use Mikroatlas\Models\LinkManager;
 use Mikroatlas\Models\MetadataManager;
+use Mikroatlas\Models\MetadataOwner;
 use Mikroatlas\Models\Microorganism;
-use Mikroatlas\Controllers\Controller;
 
 class Microbe extends Controller
 {
@@ -23,11 +24,13 @@ class Microbe extends Controller
         self::$data['layout']['page_id'] = 'microbe';
 
         $metaManager = new MetadataManager();
+        $linkMananger = new LinkManager();
 
         self::$data['microbe']['id'] = $microbe->getId();
         self::$data['microbe']['name'] = $microbe->latinName;
         // self::$data['microbe']['img'] = '$microbe_img';
-        self::$data['microbe']['metadata'] = $metaManager->loadAllMetadata($microbe->getId());
+        self::$data['microbe']['metadata'] = $metaManager->loadAllMetadata($microbe->getId(), MetadataOwner::MICROBE);
+        self::$data['microbe']['conditions'] = $linkMananger->loadConditions($microbe->getId());
 
         self::$views[] = 'microbe';
         self::$jsFiles[] = 'microbe';

@@ -2,12 +2,24 @@
 
 namespace Mikroatlas\Models;
 
+use http\Exception\BadMethodCallException;
 use PDO;
 
 class MetadataManager
 {
-    public function loadAllMetadata(int $id, bool $isObject = false): array
+    public function loadAllMetadata(int $id, MetadataOwner $metadataOwner): array
     {
+        switch ($metadataOwner) {
+            case MetadataOwner::MICROBE:
+                $filteringColumn = 'mdvalue_microorganism';
+                break;
+            case MetadataOwner::CONDITION:
+                $filteringColumn = 'mdvalue_condition';
+                break;
+            case MetadataOwner::OBJECT:
+                $filteringColumn = 'mdvalue_object';
+                break;
+        }
         $db = Db::connect();
         $statement = $db->prepare('
             SELECT
@@ -22,7 +34,7 @@ class MetadataManager
             LEFT JOIN metadata_enum ON mdkey_enumid = mdenum_id
             LEFT JOIN metadata_object ON mdkey_objectid = mdobject_id
             LEFT JOIN metadata_value_object ON mdkey_datatype = \'object\' AND mdvalue_valueid = mdvalobject_id
-            WHERE '.($isObject ? 'mdvalue_object' : 'mdvalue_microorganism').'= ? AND mdkey_hidden = FALSE;
+            WHERE '.$filteringColumn.'= ? AND mdkey_hidden = FALSE;
         ');
         $statement->execute([$id]);
 
@@ -43,7 +55,7 @@ class MetadataManager
                 $res['isObject'] = false;
                 $res['value'] = $this->getHtmlValue($valueTable, $typeName, $valueId);
             } else {
-                $objectMetadata = $this->loadAllMetadata($objectId, true);
+                $objectMetadata = $this->loadAllMetadata($objectId, MetadataOwner::OBJECT);
                 $res['isObject'] = true;
                 $res['value'] = $objectMetadata;
             }

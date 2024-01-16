@@ -2,19 +2,21 @@
 
 namespace Mikroatlas\Models;
 
+use http\Exception\BadMethodCallException;
 use PDO;
 
 class CategoryManager
 {
-    public function loadChildrenCategories(int $categoryId)
+    public function loadChildrenCategories(int $categoryId, CategoryType $categoryType)
     {
+        $this->loadDbTableData($categoryType, $tableName, $columnPrefix);
         $db = Db::connect();
         $parameters = [];
         if (!is_null($categoryId)) {
-            $statement = $db->prepare('SELECT micorcat_id, micorcat_name, micorcat_url, micorcat_icon FROM microorganism_category WHERE micorcat_parent = ?');
+            $statement = $db->prepare('SELECT '.$columnPrefix.'_id, '.$columnPrefix.'_name, '.$columnPrefix.'_url, '.$columnPrefix.'_icon FROM '.$tableName.' WHERE '.$columnPrefix.'_parent = ?');
             $parameters[] = $categoryId;
         } else {
-            $statement = $db->prepare('SELECT micorcat_id, micorcat_name, micorcat_url, micorcat_icon FROM microorganism_category WHERE micorcat_parent IS NULL');
+            $statement = $db->prepare('SELECT '.$columnPrefix.'_id, '.$columnPrefix.'_name, '.$columnPrefix.'_url, '.$columnPrefix.'_icon FROM '.$tableName.' WHERE '.$columnPrefix.'_parent IS NULL');
         }
 
         $result = $statement->execute($parameters);
@@ -25,7 +27,11 @@ class CategoryManager
 
         $categories = [];
         foreach ($result as $categoryInfo) {
-            $categories[] = new Category($categoryInfo);
+            if ($categoryType === CategoryType::MICROBE) {
+                $categories[] = new MicrobeCategory($categoryInfo);
+            } else if ($categoryType === CategoryType::CONDITION) {
+                $categories[] = new Condition($categoryInfo);
+            }
         }
 
         return $categories;
@@ -49,11 +55,12 @@ class CategoryManager
         return $microbes;
     }
 
-    public function loadCategoryId(array $categoryUrlPath) {
-        array_unshift($categoryUrlPath, 'browse');
+    public function loadCategoryId(array $categoryUrlPath, CategoryType $categoryType) {
+        $this->loadDbTableData($categoryType, $tableName, $columnPrefix);
+        array_unshift($categoryUrlPath, 'INDEX');
         $query = '';
         for ($i = 0; $i < count($categoryUrlPath); $i++) {
-            $queryTemp = 'SELECT micorcat_id FROM microorganism_category WHERE micorcat_url = ? AND micorcat_parent ';
+            $queryTemp = 'SELECT '.$columnPrefix.'_id FROM '.$tableName.' WHERE '.$columnPrefix.'_url = ? AND '.$columnPrefix.'_parent ';
             if ($i === 0) {
                 $queryTemp .= 'IS NULL';
             } else {
@@ -73,28 +80,42 @@ class CategoryManager
         return $statement->fetchColumn();
     }
 
-    public function loadCategoryPath(int $currentCategoryId)
+    public function loadCategoryPath(int $currentCategoryId, CategoryType $categoryType)
     {
+        $this->loadDbTableData($categoryType, $tableName, $columnPrefix);
         $db = Db::connect();
         //SQL query by BingAI
         $statement = $db->prepare('
             WITH RECURSIVE category_path AS (
-                SELECT micorcat_name, micorcat_url, micorcat_parent
-                FROM microorganism_category
-                WHERE micorcat_id = ?
+                SELECT '.$columnPrefix.'_name, '.$columnPrefix.'_url, '.$columnPrefix.'_parent
+                FROM '.$tableName.'
+                WHERE '.$columnPrefix.'_id = ?
                 UNION ALL
-                SELECT c.micorcat_name, c.micorcat_url, c.micorcat_parent
+                SELECT c.'.$columnPrefix.'_name, c.'.$columnPrefix.'_url, c.'.$columnPrefix.'_parent
                 FROM category_path cp
-                JOIN microorganism_category c ON cp.micorcat_parent = c.micorcat_id
+                JOIN '.$tableName.' c ON cp.'.$columnPrefix.'_parent = c.'.$columnPrefix.'_id
             )
-            SELECT micorcat_name, micorcat_url FROM category_path;
+            SELECT '.$columnPrefix.'_name, '.$columnPrefix.'_url FROM category_path;
         ');
         $result = $statement->execute([$currentCategoryId]);
         if ($result === false) {
             throw new \RuntimeException('Database query wasn\'t completed successfully');
         }
 
-        return array_reverse($statement->fetchAll(PDO::FETCH_COLUMN));
+        return array_reverse($statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    private function loadDbTableData(CategoryType $categoryType, &$tableName, &$columnPrefix) {
+        switch ($categoryType) {
+            case CategoryType::MICROBE:
+                $tableName = 'microorganism_category';
+                $columnPrefix = 'micorcat';
+                break;
+            case CategoryType::CONDITION:
+                $tableName = '`condition`'; //Escaped with ` because "condition" is a MySQL keyword
+                $columnPrefix = 'con';
+                break;
+        }
     }
 }
 

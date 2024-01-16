@@ -19,6 +19,13 @@
             </td>
         </tr>
     <?php endforeach ?>
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr><td colspan="2"><b>Původce následujících onemocnění</b></td></tr>
+    <?php foreach($microbe_conditions as $condition) : ?>
+        <tr><td colspan="2">
+            <a href="/onemocneni/<?= $condition->url ?>"><?= $condition->name ?></a>
+        </td></tr>
+    <?php endforeach ?>
 </table>
 
 <button id="new-metadata-button">Přidat metadata</button>

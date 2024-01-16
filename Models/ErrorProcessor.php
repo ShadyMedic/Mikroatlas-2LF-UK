@@ -135,19 +135,19 @@ class ErrorProcessor
                         $this->errorWebpageView = "errors/error501";
                         return true;
                     case 501001:
-                        //Category->create()
+                        //MicrobeCategory->create()
                         $this->errorWebpageData['errorMessage'] = $errorMessage;
                         return true;
                     case 501002:
-                        //Category->update()
+                        //MicrobeCategory->update()
                         $this->errorWebpageData['errorMessage'] = $errorMessage;
                         return true;
                     case 501003:
-                        //Category->load()
+                        //MicrobeCategory->load()
                         $this->errorWebpageData['errorMessage'] = $errorMessage;
                         return true;
                     case 501004:
-                        //Category->delete()
+                        //MicrobeCategory->delete()
                         $this->errorWebpageData['errorMessage'] = $errorMessage;
                         return true;
                     case 501005:
