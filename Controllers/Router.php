@@ -86,7 +86,7 @@ class Router extends Controller
     {
         $routes = parse_ini_file('routes.ini', true);
         if (!isset($routes["Routes"][$path])) {
-            throw new UnexpectedValueException("The given URL wasn't found in the configuration.", 404000);
+            throw new UnexpectedValueException("The given URL ($path) wasn't found in the configuration.", 404000);
         }
         $controllerWithArgumentsPlaceholder = $routes["Routes"][$path];
         $controllerName = explode('?', $controllerWithArgumentsPlaceholder)[0];
