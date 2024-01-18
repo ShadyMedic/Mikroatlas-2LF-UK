@@ -12,6 +12,7 @@ use UnexpectedValueException;
 class Router extends Controller
 {
     private const ROUTES_INI_FILE = 'routes.ini';
+    private const ENABLE_CACHING = false; //Make sure to enable on production
 
     /**
      * @inheritDoc
@@ -40,7 +41,6 @@ class Router extends Controller
         $controllerName = $this->loadRoutes($pathTemplate, $parameters);
         $arguments = $this->fillInArguments($variables, $parameters);
         $cacheItemIdPrefix = $this->loadCachePrefix($urlPath);
-        # var_dump($cacheItemIdPrefix);
         if ($cacheItemIdPrefix !== false) {
             //This request can be cached
             $cManager = new CacheManager();
@@ -130,6 +130,10 @@ class Router extends Controller
 
     private function loadCachePrefix(string $urlPath) : false|string
     {
+        if (!self::ENABLE_CACHING) {
+            return false;
+        }
+
         $cacheableUrlsInfo = parse_ini_file('routes.ini', true)['Caches'];
         foreach (array_keys($cacheableUrlsInfo) as $cachableUrl) {
             if (str_starts_with($urlPath, $cachableUrl)) {
