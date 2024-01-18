@@ -11,7 +11,7 @@ class LinkManager
         $db = Db::connect();
         $statement = $db->prepare(
             'SELECT micor_latinname,micor_czechname,micor_url FROM microorganism WHERE micor_id IN (
-                 SELECT miccon_microorganism FROM microrganism_condition WHERE miccon_condition = ?)'
+                 SELECT miccon_microorganism FROM microorganism_condition WHERE miccon_condition = ?)'
         );
         $result = $statement->execute([$conditionId]);
         if ($result === false) {
@@ -33,7 +33,7 @@ class LinkManager
         $db = Db::connect();
         $statement = $db->prepare(
             'SELECT con_id,con_name FROM `condition` WHERE con_id IN (
-                 SELECT miccon_condition FROM microrganism_condition WHERE miccon_microorganism = ?)'
+                 SELECT miccon_condition FROM microorganism_condition WHERE miccon_microorganism = ?)'
         );
         $result = $statement->execute([$microbeId]);
         if ($result === false) {
