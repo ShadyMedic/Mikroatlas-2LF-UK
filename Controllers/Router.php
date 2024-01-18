@@ -3,6 +3,7 @@
 namespace Mikroatlas\Controllers;
 
 use BadMethodCallException;
+use Mikroatlas\Models\CacheManager;
 use UnexpectedValueException;
 
 /**
@@ -26,8 +27,8 @@ class Router extends Controller
 
         $url = array_shift($args);
         $urlPath = parse_url($url, PHP_URL_PATH);
-        $urlPath = trim($urlPath, '/'); //Remove the trailing slash (if present)
-        $urlPath = '/'.$urlPath;
+        $urlPath = trim($urlPath, '/');
+        $urlPath = '/'.$urlPath.'/';
 
         self::$views[] = 'layout';
         self::$cssFiles[] = 'layout';
@@ -38,6 +39,21 @@ class Router extends Controller
         $pathTemplate = $this->separateUrlVariables($urlPath, $variables);
         $controllerName = $this->loadRoutes($pathTemplate, $parameters);
         $arguments = $this->fillInArguments($variables, $parameters);
+        $cacheItemIdPrefix = $this->loadCachePrefix($urlPath);
+        # var_dump($cacheItemIdPrefix);
+        if ($cacheItemIdPrefix !== false) {
+            //This request can be cached
+            $cManager = new CacheManager();
+            $cacheItemId = $cManager->generateCacheItemId($url, $cacheItemIdPrefix);
+            self::$cachedResponse = $cManager->checkCacheExists($cacheItemId);
+            self::$cacheFileId = $cacheItemId;
+
+            if (self::$cachedResponse) {
+                return 200;
+            }
+        }
+
+        //This request is not cachable
         $nextControllerName = 'Mikroatlas\\'.self::CONTROLLERS_DIRECTORY.'\\'.$controllerName;
         $nextController = new $nextControllerName();
         return $nextController->process($arguments);
@@ -110,6 +126,17 @@ class Router extends Controller
             }
         }
         return $result;
+    }
+
+    private function loadCachePrefix(string $urlPath) : false|string
+    {
+        $cacheableUrlsInfo = parse_ini_file('routes.ini', true)['Caches'];
+        foreach (array_keys($cacheableUrlsInfo) as $cachableUrl) {
+            if (str_starts_with($urlPath, $cachableUrl)) {
+                return $cacheableUrlsInfo[$cachableUrl];
+            }
+        }
+        return false;
     }
 }
 

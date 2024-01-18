@@ -3,6 +3,7 @@
 namespace Mikroatlas\Controllers;
 
 use InvalidArgumentException;
+use Mikroatlas\Models\CacheManager;
 use Mikroatlas\Models\Sanitizable;
 use Mikroatlas\Models\UserException;
 
@@ -21,6 +22,18 @@ abstract class Controller
      * This is useful when the specific controller itself takes care of outputting data.
      */
     protected static bool $isApiRequest = false;
+
+    /**
+     * @var bool $cachedResponse
+     * If set to TRUE, the website can be loaded out of a cache file instead of being generated from the views
+     * If set to FALSE, no cache is available and the website needs to be generated out of views
+     */
+    protected static bool $cachedResponse = false;
+
+    /**
+     * @var string|null Name of the cache file to load from/save into the website
+     */
+    protected static ?string $cacheFileId = null;
 
     /**
      * @var array $data
@@ -87,7 +100,26 @@ abstract class Controller
             return true;
         }
 
+        $cManager = new CacheManager();
+
+        if (self::$cachedResponse) {
+            //Load cached website
+            $cacheFile = $cManager->getCacheFile(self::$cacheFileId);
+            readfile($cacheFile);
+            return true;
+        }
+
+        if (!is_null(self::$cacheFileId)) {
+            ob_start();
+        }
+
         $this->unpackViewData();
+
+        if (!is_null(self::$cacheFileId)) {
+            $cManager->saveCache(self::$cacheFileId, ob_get_contents(), false);
+            ob_end_flush();
+        }
+
         return true;
     }
 
