@@ -17,13 +17,6 @@ abstract class Controller
     protected const CONTROLLERS_DIRECTORY = 'Controllers';
 
     /**
-     * @var bool $isApiRequest
-     * If set to true in the specific controller class, all rendering will be skipped in the generate method.
-     * This is useful when the specific controller itself takes care of outputting data.
-     */
-    protected static bool $isApiRequest = false;
-
-    /**
      * @var bool $cachedResponse
      * If set to TRUE, the website can be loaded out of a cache file instead of being generated from the views
      * If set to FALSE, no cache is available and the website needs to be generated out of views
@@ -88,6 +81,20 @@ abstract class Controller
     public abstract function process(array $args = []): int;
 
     /**
+     * Method setting the currently processed request as API request with JSON response.
+     * This means that no views are used (only a basic "empty" one (json.phtml)), Content-type header is set
+     * and response is prepared to be outputted.
+     * @param string $jsonString JSON response for the current request
+     * @return void
+     */
+    public function setJsonResponse(string $jsonString): void
+    {
+        header('Content-type: application/json');
+        self::$views = ['json'];
+        self::$data['json']['response'] = $jsonString;
+    }
+
+    /**
      * Method unpacking the view data and loading all the views.
      * THIS METHOD IS WRITING OUTPUT INTO THE WEBPAGE.
      * Because of this, it should be called at the very end of the request processing protocol.
@@ -96,10 +103,6 @@ abstract class Controller
      */
     public function generate(): bool
     {
-        if (self::$isApiRequest) {
-            return true;
-        }
-
         $cManager = new CacheManager();
 
         if (self::$cachedResponse) {

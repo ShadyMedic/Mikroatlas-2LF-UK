@@ -12,7 +12,7 @@ use UnexpectedValueException;
 class Router extends Controller
 {
     private const ROUTES_INI_FILE = 'routes.ini';
-    private const ENABLE_CACHING = false; //Make sure to enable on production
+    private const ENABLE_CACHING = true; //Make sure to enable on production
 
     /**
      * @inheritDoc

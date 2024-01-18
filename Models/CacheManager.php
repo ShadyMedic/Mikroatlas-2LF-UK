@@ -5,7 +5,7 @@ namespace Mikroatlas\Models;
 class CacheManager
 {
     private const CACHE_DIR = 'cache';
-    private const CACHE_FILE_EXTENSION = '.html';
+    private const CACHE_FILE_EXTENSION = ''; //Using .html would work, but not for API responses using JSON
 
     public function generateCacheItemId(string $url, string $prefix = ''): string
     {

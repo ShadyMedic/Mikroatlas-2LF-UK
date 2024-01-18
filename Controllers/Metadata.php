@@ -24,9 +24,7 @@ class Metadata extends Controller
                 throw new \InvalidArgumentException('Invalid action type.', 400002);
         }
 
-        header('Content-type: application/json');
-        self::$isApiRequest = true;
-        echo json_encode($result);
+        $this->setJsonResponse(json_encode($result));
         return 200;
     }
 

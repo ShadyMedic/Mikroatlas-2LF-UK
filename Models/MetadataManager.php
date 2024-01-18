@@ -169,7 +169,7 @@ class MetadataManager
                 //etc more attributes
             ]
         */
-
+        return ['error' => 'not implemented yet']; //Temporary
 
         $db = Db::connect();
         $statement = $db->prepare('
