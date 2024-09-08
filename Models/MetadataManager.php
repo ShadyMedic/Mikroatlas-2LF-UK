@@ -154,39 +154,100 @@ class MetadataManager
 
     public function loadValueStructure(int $metadataKeyId): array
     {
-        //TODO do one of the following:
-        /*
-            1. Datatype is primitive? Return [0 => [type => 'text/int/float/url/file', maxlength => 127 OR filetype => 'jpg/...']]
-            2. Datatype is enum? Return [0 => [type => 'select', options => ['Positive', 'Negative']]]
-            3. Datatype is object? Return [
-                0 => [type => 'text/int/float/url/file', maxlength => 127 OR filetype => 'jpg/...'],
-                1 => [type => 'select', options => ['Positive', 'Negative']],
-                2 => [
-                    0 => [type => 'text/int/float/url/file', maxlength => 127 OR filetype => 'jpg/...'],
-                    1 => [type => 'select', options => ['Positive', 'Negative']],
-                    //etc nested objects
-                ]
-                //etc more attributes
-            ]
-        */
-        return ['error' => 'not implemented yet']; //Temporary
-
         $db = Db::connect();
         $statement = $db->prepare('
-            --TODO
+            SELECT
+                mdkey_datatype AS "datatype",
+                COALESCE(mdkey_typeid, mdkey_enumid, mdkey_objectid) AS datatypeId,
+                mdkey_islist AS "isList",
+                COALESCE(mdtype_name, mdenum_name, mdobject_name) AS "datatypeName",
+                COALESCE(mdtype_valuetable, mdenum_optiontable) AS "valueTable"
+            FROM metadata_key
+            LEFT JOIN metadata_type ON metadata_key.mdkey_typeid = metadata_type.mdtype_id
+            LEFT JOIN metadata_enum ON metadata_key.mdkey_enumid = metadata_enum.mdenum_id
+            LEFT JOIN metadata_object ON metadata_key.mdkey_objectid = metadata_object.mdobject_id
+            WHERE mdkey_id = ?;
         ');
         $statement->execute([$metadataKeyId]);
 
-        $fieldList = $statement->fetchAll();
-        $finalFields = [];
+        $keyInfo = $statement->fetch();
 
-        foreach ($fieldList as $fieldEntry) {
-            $res = [];
+        $result = ['keyId'=>$metadataKeyId, 'multipleValues'=> (bool)$keyInfo['isList']];
 
-            //TODO
+        switch ($keyInfo['datatype']) {
+            case 'primitive':
+                $result['valueTable'] = $keyInfo['valueTable'];
+                switch ($keyInfo['datatypeName']) {
+                    case 'int':
+                        $result['controls']['tag'] = 'input';
+                        $result['controls']['requiresClosing'] = false;
+                        $result['controls']['attributes']['type'] = 'number';
+                        $result['controls']['attributes']['step'] = '1';
+                        $result['controls']['attributes']['min'] = '-2147483648';
+                        $result['controls']['attributes']['max'] = '2147483647';
+                        break;
+                    case 'float':
+                        $result['controls']['tag'] = 'input';
+                        $result['controls']['requiresClosing'] = false;
+                        $result['controls']['attributes']['type'] = 'number';
+                        $result['controls']['attributes']['step'] = 'any';
+                        $result['controls']['attributes']['min'] = '-3.402823466E+38';
+                        $result['controls']['attributes']['max'] = '3.402823466E+38';
+                        break;
+                    case 'string':
+                        $result['controls']['tag'] = 'input';
+                        $result['controls']['requiresClosing'] = false;
+                        $result['controls']['attributes']['type'] = 'text';
+                        $result['controls']['attributes']['maxlength'] = '127';
+                        break;
+                    case 'text':
+                        $result['controls']['tag'] = 'textarea';
+                        $result['controls']['requiresClosing'] = true;
+                        $result['controls']['attributes']['maxlength'] = '65535';
+                        break;
+                    case 'image':
+                        $result['controls']['tag'] = 'input';
+                        $result['controls']['requiresClosing'] = false;
+                        $result['controls']['attributes']['type'] = 'file';
+                        $result['controls']['attributes']['accept'] = 'image/*';
+                        break;
+                    case 'video':
+                        $result['controls']['tag'] = 'input';
+                        $result['controls']['requiresClosing'] = false;
+                        $result['controls']['attributes']['type'] = 'file';
+                        $result['controls']['attributes']['accept'] = 'video/*';
+                        break;
+                    case 'link':
+                        $result['controls']['tag'] = 'input';
+                        $result['controls']['requiresClosing'] = false;
+                        $result['controls']['attributes']['type'] = 'url';
+                        $result['controls']['attributes']['maxlength'] = '512';
+                        break;
+                }
+                break;
+            case 'enum':
+                $result['controls']['tag'] = 'select';
+                $result['controls']['requiresClosing'] = true;
 
-            $finalFields[] = $res;
+                $statement = $db->prepare('SELECT * FROM '. $keyInfo['valueTable'].';');
+                $statement->execute();
+                $result['controls']['options'] = $statement->fetchAll(PDO::FETCH_NUM);
+                break;
+            case 'object':
+                $result['valueTable'] = 'metadata_value_object';
+                $result['controls']['tag'] = 'fieldset';
+                $result['controls']['requiresClosing'] = true;
+
+                $statement = $db->prepare('
+                    SELECT mdobjattr_mdkey_id FROM metadata_objectattributes WHERE mdobjattr_mdobj_id = ?;
+                ');
+                $statement->execute([$keyInfo['datatypeId']]);
+                $attributesIds = $statement->fetchAll(PDO::FETCH_COLUMN);
+                foreach ($attributesIds as $attributeId) {
+                    $result['controls']['attributes'][] = $this->loadValueStructure($attributeId);
+                }
+                break;
         }
-        return $finalFields;
+        return $result;
     }
 }
