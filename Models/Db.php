@@ -6,9 +6,9 @@ use PDO;
 
 class Db
 {
-    private const DB_HOST = 'localhost';
-    private const DB_USER = 'root';
-    private const DB_PASS = '';
+    private const DB_HOST = '127.0.0.1';
+    private const DB_USER = 'mikroatlasapp';
+    private const DB_PASS = 'password';
     private const DB_NAME = 'mikroatlas';
     private const DB_SETTINGS = array(
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
