@@ -28,8 +28,52 @@ $(function(){
         $.get(
             '/api/metadata/load-value-structure/' + keyId,
             function (response) {
-                console.log(response)
+                const html = generateInputStructure(response) + '<input type="submit" value="Uložit">';
+                $("#new-metadata-value").html(html);
             }
         )
     })
 });
+
+function generateInputStructure(response, keyIdPrefix = '') {
+    const type = response.type;
+    const keyId = response.keyId;
+    const multipleValues = response.multipleValues; //TODO: add support
+    const controls = response.controls;
+    const tag = controls.tag;
+    const requiresClosing = controls.requiresClosing;
+    const attributes = controls.attributes;
+    let html = '';
+
+    //Generating opening tag
+    html += '<' + tag;
+    for (const key in attributes) {
+        html += ' ' + key + '="' + attributes[key] + '"';
+    }
+    html += ' name="' + keyId + '">\n';
+
+    switch (type) {
+        case 'primitive':
+            //No control inner HTML needed yet
+            break;
+        case 'enum':
+            const options = controls.options;
+            for (const key in options) {
+                html += '<option value="' + key + '">' + options[key] + '</option>\n';
+            }
+            break;
+        case 'object':
+            const parts = controls.parts;
+            parts.forEach(function (part){
+                html += generateInputStructure(part);
+            });
+            break;
+    }
+
+    //Generating closing tag
+    if (requiresClosing) {
+        html += '</' + tag + '>\n';
+    }
+
+    return html;
+}
