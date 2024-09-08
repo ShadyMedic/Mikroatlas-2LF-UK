@@ -50,7 +50,7 @@ function generateInputStructure(response, keyIdPrefix = '') {
     for (const key in attributes) {
         html += ' ' + key + '="' + attributes[key] + '"';
     }
-    html += ' name="' + keyId + '">\n';
+    html += ' name="' + keyIdPrefix.toString() + keyId.toString() + '">\n';
 
     switch (type) {
         case 'primitive':
@@ -65,7 +65,7 @@ function generateInputStructure(response, keyIdPrefix = '') {
         case 'object':
             const parts = controls.parts;
             parts.forEach(function (part){
-                html += generateInputStructure(part);
+                html += generateInputStructure(part, keyIdPrefix.toString() + keyId.toString() + '-');
             });
             break;
     }
