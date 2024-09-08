@@ -172,7 +172,11 @@ class MetadataManager
 
         $keyInfo = $statement->fetch();
 
-        $result = ['keyId'=>$metadataKeyId, 'multipleValues'=> (bool)$keyInfo['isList']];
+        $result = [
+            'keyId'=>$metadataKeyId,
+            'multipleValues'=> (bool)$keyInfo['isList'],
+            'type' => $keyInfo['datatype']
+        ];
 
         switch ($keyInfo['datatype']) {
             case 'primitive':
@@ -228,15 +232,17 @@ class MetadataManager
             case 'enum':
                 $result['controls']['tag'] = 'select';
                 $result['controls']['requiresClosing'] = true;
+                $result['controls']['attributes'] = [];
 
                 $statement = $db->prepare('SELECT * FROM '. $keyInfo['valueTable'].';');
                 $statement->execute();
-                $result['controls']['options'] = $statement->fetchAll(PDO::FETCH_NUM);
+                $result['controls']['options'] = $statement->fetchAll(PDO::FETCH_KEY_PAIR);
                 break;
             case 'object':
                 $result['valueTable'] = 'metadata_value_object';
                 $result['controls']['tag'] = 'fieldset';
                 $result['controls']['requiresClosing'] = true;
+                $result['controls']['attributes'] = [];
 
                 $statement = $db->prepare('
                     SELECT mdobjattr_mdkey_id FROM metadata_objectattributes WHERE mdobjattr_mdobj_id = ?;
@@ -244,7 +250,7 @@ class MetadataManager
                 $statement->execute([$keyInfo['datatypeId']]);
                 $attributesIds = $statement->fetchAll(PDO::FETCH_COLUMN);
                 foreach ($attributesIds as $attributeId) {
-                    $result['controls']['attributes'][] = $this->loadValueStructure($attributeId);
+                    $result['controls']['parts'][] = $this->loadValueStructure($attributeId);
                 }
                 break;
         }
