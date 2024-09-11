@@ -2,8 +2,8 @@
 
 namespace Mikroatlas\Controllers;
 
-use Mikroatlas\Controllers\Controller;
 use Mikroatlas\Models\MetadataManager;
+use Mikroatlas\Models\Microorganism;
 
 class Metadata extends Controller
 {
@@ -20,6 +20,11 @@ class Metadata extends Controller
             case 'valueStructure':
                 $result = $this->loadValueStructure($args);
                 break;
+            case 'addValue':
+                $formUrl = $_POST['form-url'];
+                unset($_POST['form-url']);
+                $result = $this->addValue($args);
+                $this->redirect($formUrl);
             default:
                 throw new \InvalidArgumentException('Invalid action type.', 400002);
         }
@@ -50,5 +55,14 @@ class Metadata extends Controller
 
         $metaManager = new MetadataManager();
         return $metaManager->loadValueStructure($keyId);
+    }
+
+    private function addValue(array $args) : bool
+    {
+        $microbeId = $_POST['microbe-id'];
+        unset($_POST['microbe-id']);
+        $microbe = new Microorganism(['micor_id' => $microbeId]);
+        $formData = array_replace($_POST, $_FILES); //There can't be duplicate keys anyway and unlike array_merge, this doesn't reset keys
+        return $microbe->addMetadataValue($formData);
     }
 }

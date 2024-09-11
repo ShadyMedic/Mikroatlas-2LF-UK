@@ -4,7 +4,7 @@ namespace Mikroatlas\Models;
 
 enum MetadataOwner
 {
-    case MICROBE;
+    case MICROORGANISM;
     case CONDITION;
     case OBJECT;
 }

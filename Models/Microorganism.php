@@ -89,5 +89,48 @@ class Microorganism implements DatabaseRecord, Sanitizable
 
         $this->id = $statement->fetchColumn();
     }
+
+    public function addMetadataValue(array $formData): bool
+    {
+        $mm = new MetadataManager();
+        $key = array_key_first($formData);
+        if (strpos($key, '-') === false) {
+            //Non-object value, $formData contains just one element
+            return $mm->addMetadataRecord($this->id, MetadataOwner::MICROORGANISM, (int)$key, $formData[$key]);
+        } else {
+            //Object value, $formData contains elements for all of its attributes
+            $objectKeyId = substr($key, 0, strpos($key, '-'));
+            $formDataWithRootKeyIdStripped = [];
+            foreach ($formData as $key => $value) {
+                $formDataWithRootKeyIdStripped[substr($key, strlen($objectKeyId) + 1)] = $value;
+            }
+            $value = $this->buildObjectValue($formDataWithRootKeyIdStripped);
+            return $mm->addMetadataRecord($this->id, MetadataOwner::MICROORGANISM, (int)$objectKeyId, $value);
+        }
+    }
+
+    private function buildObjectValue($formData): array
+    {
+        $object = [];
+        $attrKeyIds = array_keys($formData);
+        for ($i = 0; $i < count($formData); $i++) {
+            $attrKeyId = $attrKeyIds[$i];
+            $attrValue = $formData[$attrKeyId];
+
+            if (strpos($attrKeyId, '-') !== false) {
+                $innerObjectKeyId = substr($attrKeyId, 0, strpos($attrKeyId, '-'));
+                $innerObjectAttributes = [];
+                for ($j = $i; $j < count($formData); $j++) {
+                    if (strpos($attrKeyIds[$j], $innerObjectKeyId.'-') === 0) {
+                        $innerObjectAttributes[substr($attrKeyIds[$j], strlen($innerObjectKeyId) + 1)] = $formData[$attrKeyIds[$j]];
+                    }
+                }
+                $attrKeyId = $innerObjectKeyId;
+                $attrValue = $this->buildObjectValue($innerObjectAttributes);
+            }
+            $object[$attrKeyId] = $attrValue;
+        }
+        return $object;
+    }
 }
 

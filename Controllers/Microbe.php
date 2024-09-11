@@ -29,7 +29,7 @@ class Microbe extends Controller
         self::$data['microbe']['id'] = $microbe->getId();
         self::$data['microbe']['name'] = $microbe->latinName;
         // self::$data['microbe']['img'] = '$microbe_img';
-        self::$data['microbe']['metadata'] = $metaManager->loadAllMetadata($microbe->getId(), MetadataOwner::MICROBE);
+        self::$data['microbe']['metadata'] = $metaManager->loadAllMetadata($microbe->getId(), MetadataOwner::MICROORGANISM);
         self::$data['microbe']['conditions'] = $linkMananger->loadConditions($microbe->getId());
 
         self::$views[] = 'microbe';

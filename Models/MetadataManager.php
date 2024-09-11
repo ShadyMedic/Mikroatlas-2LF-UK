@@ -10,7 +10,7 @@ class MetadataManager
     public function loadAllMetadata(int $id, MetadataOwner $metadataOwner): array
     {
         switch ($metadataOwner) {
-            case MetadataOwner::MICROBE:
+            case MetadataOwner::MICROORGANISM:
                 $filteringColumn = 'mdvalue_microorganism';
                 break;
             case MetadataOwner::CONDITION:
@@ -55,7 +55,7 @@ class MetadataManager
                 $res['isObject'] = false;
                 $res['value'] = $this->getHtmlValue($valueTable, $typeName, $valueId);
             } else {
-                $objectMetadata = $this->loadAllMetadata($objectId, MetadataOwner::OBJECT);
+                $objectMetadata = $this->loadAllMetadata($valueId, MetadataOwner::OBJECT);
                 $res['isObject'] = true;
                 $res['value'] = $objectMetadata;
             }
@@ -255,5 +255,64 @@ class MetadataManager
                 break;
         }
         return $result;
+    }
+
+    public function addMetadataRecord(int $metadataOwnerId, MetadataOwner $metadataOwnerType, int $keyId, $value): bool
+    {
+        $db = Db::connect();
+        //Load table name and prefix to save value into
+        if (is_array($value)) {
+            $valueTable = 'metadata_value_object';
+            $valueColumn = 'mdvalobject_comment';
+            $datatype = 'object';
+            $finalValue = '...'; //The comment column has use only when inserting objects manually
+        } else {
+            $statement = $db->prepare('
+                SELECT
+                    mdkey_datatype AS "datatype",
+                    COALESCE(mdtype_valuetable, mdenum_optiontable) AS "valueTable",
+                    COALESCE(mdtype_valuetableprefix, mdenum_optiontableprefix) AS "tablePrefix"
+                FROM metadata_key
+                LEFT JOIN metadata_type ON metadata_key.mdkey_typeid = metadata_type.mdtype_id
+                LEFT JOIN metadata_enum ON metadata_key.mdkey_enumid = metadata_enum.mdenum_id
+                WHERE mdkey_id = ?;
+            ');
+            $statement->execute([$keyId]);
+            $data = $statement->fetch();
+            $valueTable = $data['valueTable'];
+            $valueColumn = $data['tablePrefix'].'_value';
+            $datatype = $data['datatype'];
+            $finalValue = $value; //Primitive data type or enum case ID
+        }
+
+        //Save the value
+        if ($datatype !== 'enum') {
+            $statement = $db->prepare('
+                    INSERT INTO '.$valueTable.' ('.$valueColumn.') VALUES (?);
+                ');
+            $statement->execute([$finalValue]);
+            $valueId = $db->lastInsertId();
+        } else {
+            $valueId = $value;
+        }
+
+        //Link the value
+        $statement = $db->prepare('
+                INSERT INTO metadata_value (
+                    mdvalue_'.strtolower($metadataOwnerType->name).',
+                    mdvalue_key,
+                    mdvalue_valueid
+                    )
+                VALUES (?,?,?)
+            ');
+        $statement->execute([$metadataOwnerId, $keyId, $valueId]);
+        if ($datatype === 'object') {
+            //Save all object attributes
+            foreach ($value as $attributeKeyId => $attributeValue) {
+                $this->addMetadataRecord($valueId, MetadataOwner::OBJECT, $attributeKeyId, $attributeValue);
+            }
+        }
+
+        return true;
     }
 }

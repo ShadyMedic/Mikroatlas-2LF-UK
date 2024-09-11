@@ -29,7 +29,9 @@
 </table>
 
 <button id="new-metadata-button">Přidat metadata</button>
-<form id="new-metadata-form" class="hidden">
+<form id="new-metadata-form" class="hidden" enctype="multipart/form-data" method="post" action="/api/metadata/add">
+    <input type="hidden" name="microbe-id" value="<?= $microbe_id ?>">
+    <input type="hidden" name="form-url" value="<?= $_SERVER['REQUEST_URI'] ?>">
     <h3>Přidat metadata</h3>
     <label for="new-metadata-key">Typ informace</label>
     <select id="new-metadata-key">
