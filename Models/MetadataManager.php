@@ -180,7 +180,6 @@ class MetadataManager
 
         switch ($keyInfo['datatype']) {
             case 'primitive':
-                $result['valueTable'] = $keyInfo['valueTable'];
                 switch ($keyInfo['datatypeName']) {
                     case 'int':
                         $result['controls']['tag'] = 'input';
@@ -239,7 +238,6 @@ class MetadataManager
                 $result['controls']['options'] = $statement->fetchAll(PDO::FETCH_KEY_PAIR);
                 break;
             case 'object':
-                $result['valueTable'] = 'metadata_value_object';
                 $result['controls']['tag'] = 'fieldset';
                 $result['controls']['requiresClosing'] = true;
                 $result['controls']['attributes'] = [];
