@@ -94,7 +94,7 @@ class Microorganism implements DatabaseRecord, Sanitizable
     {
         $mm = new MetadataManager();
         $key = array_key_first($formData);
-        if (strpos($key, '-') === false) {
+        if (!str_contains($key, '-')) {
             //Non-object value, $formData contains just one element
             return $mm->addMetadataRecord($this->id, MetadataOwner::MICROORGANISM, (int)$key, $formData[$key]);
         } else {
@@ -117,11 +117,11 @@ class Microorganism implements DatabaseRecord, Sanitizable
             $attrKeyId = $attrKeyIds[$i];
             $attrValue = $formData[$attrKeyId];
 
-            if (strpos($attrKeyId, '-') !== false) {
+            if (str_contains($attrKeyId, '-')) {
                 $innerObjectKeyId = substr($attrKeyId, 0, strpos($attrKeyId, '-'));
                 $innerObjectAttributes = [];
                 for ($j = $i; $j < count($formData); $j++) {
-                    if (strpos($attrKeyIds[$j], $innerObjectKeyId.'-') === 0) {
+                    if (str_starts_with($attrKeyIds[$j], $innerObjectKeyId . '-')) {
                         $innerObjectAttributes[substr($attrKeyIds[$j], strlen($innerObjectKeyId) + 1)] = $formData[$attrKeyIds[$j]];
                     }
                 }

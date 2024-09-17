@@ -5,6 +5,9 @@ RewriteEngine On
 # Pokud server bude mít problémy se správným zpracováním přesměrování, může pomoci odkomentování následujícího řádku
 RewriteBase /
 
+RewriteCond %{REQUESt_URI} uploads/.*
+RewriteRule ^.*$ - [NC,L]
+
 # Povolení přímého přístupu k konfiguračním souborům pro prohlížeče
 RewriteCond %{REQUEST_URI} !^/robots\.txt
 
