@@ -43,6 +43,7 @@ function generateInputStructure(response, keyIdPrefix = '') {
     const tag = controls.tag;
     const requiresClosing = controls.requiresClosing;
     const attributes = controls.attributes;
+    const settings = controls.settings;
     let html = '';
 
     //Generating opening tag
@@ -74,6 +75,33 @@ function generateInputStructure(response, keyIdPrefix = '') {
     if (requiresClosing) {
         html += '</' + tag + '>\n';
     }
+
+    if (!settings) {
+        return html; //Early return
+    }
+
+    settings.forEach(function (element) {
+        html += '<' + element.tag;
+        for (const key in element.attributes) {
+            if (key === 'name') {
+                element.attributes[key] = element.attributes[key].replace('{{{parent}}}', keyIdPrefix.toString() + keyId.toString());
+            }
+            html += ' ' + key + '="' + element.attributes[key] + '"';
+        }
+        html += '>\n';
+
+        if (element.content) {
+            html += element.content;
+        } else if (element.options) {
+            for (const key in element.options) {
+                html += '<option value="' + key + '">' + element.options[key] + '</option>\n';
+            }
+        }
+
+        if (element.requiresClosing) {
+            html += '</' + element.tag + '>\n';
+        }
+    });
 
     return html;
 }

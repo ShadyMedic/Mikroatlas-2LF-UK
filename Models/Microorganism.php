@@ -95,8 +95,8 @@ class Microorganism implements DatabaseRecord, Sanitizable
         $mm = new MetadataManager();
         $key = array_key_first($formData);
         if (!str_contains($key, '-')) {
-            //Non-object value, $formData contains just one element
-            return $mm->addMetadataRecord($this->id, MetadataOwner::MICROORGANISM, (int)$key, $formData[$key]);
+            //Non-object value, $formData contains just one element (and maybe its settings)
+            return $mm->addMetadataRecord($this->id, MetadataOwner::MICROORGANISM, (int)$key, $formData);
         } else {
             //Object value, $formData contains elements for all of its attributes
             $objectKeyId = substr($key, 0, strpos($key, '-'));
@@ -105,7 +105,7 @@ class Microorganism implements DatabaseRecord, Sanitizable
                 $formDataWithRootKeyIdStripped[substr($key, strlen($objectKeyId) + 1)] = $value;
             }
             $value = $this->buildObjectValue($formDataWithRootKeyIdStripped);
-            return $mm->addMetadataRecord($this->id, MetadataOwner::MICROORGANISM, (int)$objectKeyId, $value);
+            return $mm->addMetadataRecord($this->id, MetadataOwner::MICROORGANISM, (int)$objectKeyId, [$objectKeyId => $value]);
         }
     }
 
@@ -113,7 +113,7 @@ class Microorganism implements DatabaseRecord, Sanitizable
     {
         $object = [];
         $attrKeyIds = array_keys($formData);
-        for ($i = 0; $i < count($formData); $i++) {
+        for ($i = 0; $i < count($attrKeyIds); $i++) {
             $attrKeyId = $attrKeyIds[$i];
             $attrValue = $formData[$attrKeyId];
 
@@ -123,6 +123,7 @@ class Microorganism implements DatabaseRecord, Sanitizable
                 for ($j = $i; $j < count($formData); $j++) {
                     if (str_starts_with($attrKeyIds[$j], $innerObjectKeyId . '-')) {
                         $innerObjectAttributes[substr($attrKeyIds[$j], strlen($innerObjectKeyId) + 1)] = $formData[$attrKeyIds[$j]];
+                        unset($attrKeyIds[$j]);
                     }
                 }
                 $attrKeyId = $innerObjectKeyId;

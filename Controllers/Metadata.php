@@ -66,7 +66,7 @@ class Metadata extends Controller
         $microbeId = $formData['microbe-id'];
         unset($formData['microbe-id']);
         $microbe = new Microorganism(['micor_id' => $microbeId]);
-        return $microbe->addMetadataValue($formData);
+        /*return*/ $microbe->addMetadataValue($formData); die();
     }
 
     private function processUploadedFiles(array $filesData) : false|array

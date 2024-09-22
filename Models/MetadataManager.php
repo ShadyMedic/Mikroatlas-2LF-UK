@@ -213,18 +213,111 @@ class MetadataManager
                         $result['controls']['requiresClosing'] = false;
                         $result['controls']['attributes']['type'] = 'file';
                         $result['controls']['attributes']['accept'] = 'image/*';
+                        $result['controls']['settings'][0]['tag'] = 'input';
+                        $result['controls']['settings'][0]['requiresClosing'] = false;
+                        $result['controls']['settings'][0]['attributes']['name'] = '{{{parent}}}:width';
+                        $result['controls']['settings'][0]['attributes']['placeholder'] = 'Šířka obrázku';
+                        $result['controls']['settings'][0]['attributes']['type'] = 'number';
+                        $result['controls']['settings'][0]['attributes']['step'] = '1';
+                        $result['controls']['settings'][0]['attributes']['min'] = '1';
+                        $result['controls']['settings'][0]['attributes']['max'] = '5000';
+                        $result['controls']['settings'][1]['tag'] = 'input';
+                        $result['controls']['settings'][1]['requiresClosing'] = false;
+                        $result['controls']['settings'][1]['attributes']['name'] = '{{{parent}}}:height';
+                        $result['controls']['settings'][1]['attributes']['placeholder'] = 'Výška obrázku';
+                        $result['controls']['settings'][1]['attributes']['type'] = 'number';
+                        $result['controls']['settings'][1]['attributes']['step'] = '1';
+                        $result['controls']['settings'][1]['attributes']['min'] = '1';
+                        $result['controls']['settings'][1]['attributes']['max'] = '5000';
+                        $result['controls']['settings'][2]['tag'] = 'span';
+                        $result['controls']['settings'][2]['requiresClosing'] = true;
+                        $result['controls']['settings'][2]['content'] = "Povolit inverzi";
+                        $result['controls']['settings'][3]['tag'] = 'input';
+                        $result['controls']['settings'][3]['requiresClosing'] = false;
+                        $result['controls']['settings'][3]['attributes']['name'] = '{{{parent}}}:allowinvert';
+                        $result['controls']['settings'][3]['attributes']['type'] = 'hidden';
+                        $result['controls']['settings'][3]['attributes']['value'] = '0';
+                        $result['controls']['settings'][4]['tag'] = 'input';
+                        $result['controls']['settings'][4]['requiresClosing'] = false;
+                        $result['controls']['settings'][4]['attributes']['name'] = '{{{parent}}}:allowinvert';
+                        $result['controls']['settings'][4]['attributes']['type'] = 'checkbox';
+                        $result['controls']['settings'][4]['attributes']['value'] = '1';
                         break;
                     case 'video':
                         $result['controls']['tag'] = 'input';
                         $result['controls']['requiresClosing'] = false;
                         $result['controls']['attributes']['type'] = 'file';
                         $result['controls']['attributes']['accept'] = 'video/*';
+                        $result['controls']['settings'][0]['tag'] = 'input';
+                        $result['controls']['settings'][0]['requiresClosing'] = false;
+                        $result['controls']['settings'][0]['attributes']['name'] = '{{{parent}}}:width';
+                        $result['controls']['settings'][0]['attributes']['placeholder'] = 'Šírka videa';
+                        $result['controls']['settings'][0]['attributes']['type'] = 'number';
+                        $result['controls']['settings'][0]['attributes']['step'] = '1';
+                        $result['controls']['settings'][0]['attributes']['min'] = '1';
+                        $result['controls']['settings'][0]['attributes']['max'] = '5000';
+                        $result['controls']['settings'][1]['tag'] = 'input';
+                        $result['controls']['settings'][1]['requiresClosing'] = false;
+                        $result['controls']['settings'][1]['attributes']['name'] = '{{{parent}}}:height';
+                        $result['controls']['settings'][1]['attributes']['placeholder'] = 'Výška videa';
+                        $result['controls']['settings'][1]['attributes']['type'] = 'number';
+                        $result['controls']['settings'][1]['attributes']['step'] = '1';
+                        $result['controls']['settings'][1]['attributes']['min'] = '1';
+                        $result['controls']['settings'][1]['attributes']['max'] = '5000';
+                        $result['controls']['settings'][2]['tag'] = 'span';
+                        $result['controls']['settings'][2]['requiresClosing'] = true;
+                        $result['controls']['settings'][2]['content'] = "Ztlumit video";
+                        $result['controls']['settings'][3]['tag'] = 'input';
+                        $result['controls']['settings'][3]['requiresClosing'] = false;
+                        $result['controls']['settings'][3]['attributes']['name'] = '{{{parent}}}:mute';
+                        $result['controls']['settings'][3]['attributes']['type'] = 'hidden';
+                        $result['controls']['settings'][3]['attributes']['value'] = '0';
+                        $result['controls']['settings'][4]['tag'] = 'input';
+                        $result['controls']['settings'][4]['requiresClosing'] = false;
+                        $result['controls']['settings'][4]['attributes']['name'] = '{{{parent}}}:mute';
+                        $result['controls']['settings'][4]['attributes']['type'] = 'checkbox';
+                        $result['controls']['settings'][4]['attributes']['value'] = '1';
+                        $result['controls']['settings'][4]['attributes']['checked'] = 'true';
+                        $result['controls']['settings'][5]['tag'] = 'span';
+                        $result['controls']['settings'][5]['requiresClosing'] = true;
+                        $result['controls']['settings'][5]['content'] = "Povolit ovládání videa";
+                        $result['controls']['settings'][6]['tag'] = 'input';
+                        $result['controls']['settings'][6]['requiresClosing'] = false;
+                        $result['controls']['settings'][6]['attributes']['name'] = '{{{parent}}}:controls';
+                        $result['controls']['settings'][6]['attributes']['type'] = 'hidden';
+                        $result['controls']['settings'][6]['attributes']['value'] = '0';
+                        $result['controls']['settings'][7]['tag'] = 'input';
+                        $result['controls']['settings'][7]['requiresClosing'] = false;
+                        $result['controls']['settings'][7]['attributes']['name'] = '{{{parent}}}:controls';
+                        $result['controls']['settings'][7]['attributes']['type'] = 'checkbox';
+                        $result['controls']['settings'][7]['attributes']['value'] = '1';
+                        $result['controls']['settings'][7]['attributes']['checked'] = 'true';
+                        $result['controls']['settings'][8]['tag'] = 'span';
+                        $result['controls']['settings'][8]['requiresClosing'] = true;
+                        $result['controls']['settings'][8]['content'] = "Automaticky spustit video";
+                        $result['controls']['settings'][9]['tag'] = 'input';
+                        $result['controls']['settings'][9]['requiresClosing'] = false;
+                        $result['controls']['settings'][9]['attributes']['name'] = '{{{parent}}}:autoplay';
+                        $result['controls']['settings'][9]['attributes']['type'] = 'hidden';
+                        $result['controls']['settings'][9]['attributes']['value'] = '0';
+                        $result['controls']['settings'][10]['tag'] = 'input';
+                        $result['controls']['settings'][10]['requiresClosing'] = false;
+                        $result['controls']['settings'][10]['attributes']['name'] = '{{{parent}}}:autoplay';
+                        $result['controls']['settings'][10]['attributes']['type'] = 'checkbox';
+                        $result['controls']['settings'][10]['attributes']['value'] = '1';
                         break;
                     case 'link':
                         $result['controls']['tag'] = 'input';
                         $result['controls']['requiresClosing'] = false;
                         $result['controls']['attributes']['type'] = 'url';
                         $result['controls']['attributes']['maxlength'] = '512';
+                        $result['controls']['settings'][0]['tag'] = 'select';
+                        $result['controls']['settings'][0]['requiresClosing'] = true;
+                        $result['controls']['settings'][0]['attributes']['name'] = '{{{parent}}}:targetmode';
+                        $result['controls']['settings'][0]['options'] = [
+                            '_blank' => 'Otevřít na nové záložce',
+                            '_self' => 'Otevřít místo aktuální stránky'
+                        ];
                         break;
                 }
                 break;
@@ -255,15 +348,20 @@ class MetadataManager
         return $result;
     }
 
-    public function addMetadataRecord(int $metadataOwnerId, MetadataOwner $metadataOwnerType, int $keyId, $value): bool
+    public function addMetadataRecord(int $metadataOwnerId, MetadataOwner $metadataOwnerType, int $keyId, array $value): bool
     {
+        print_r($keyId);
+        print_r($value);
+        echo "----\n";
+
         $db = Db::connect();
         //Load table name and prefix to save value into
-        if (is_array($value)) {
+        if (is_array($value[$keyId])) {
             $valueTable = 'metadata_value_object';
-            $valueColumn = 'mdvalobject_comment';
+            $valueTablePrefix = 'mdvalobject_';
+            $valueColumn = $valueTablePrefix.'comment';
             $datatype = 'object';
-            $finalValue = '...'; //The comment column has use only when inserting objects manually
+            $finalValue = null; //The comment column has use only when inserting objects manually
         } else {
             $statement = $db->prepare('
                 SELECT
@@ -278,20 +376,31 @@ class MetadataManager
             $statement->execute([$keyId]);
             $data = $statement->fetch();
             $valueTable = $data['valueTable'];
-            $valueColumn = $data['tablePrefix'].'_value';
+            $valueTablePrefix = $data['tablePrefix'].'_';
+            $valueColumn = $valueTablePrefix.'value';
             $datatype = $data['datatype'];
-            $finalValue = $value; //Primitive data type or enum case ID
+            $finalValue = $value[$keyId]; //Primitive data type or enum case ID
         }
 
         //Save the value
         if ($datatype !== 'enum') {
+            $columnNames = [$valueColumn];
+            $columnValues = [$finalValue];
+            foreach ($value as $inputName => $inputValue) {
+                if (str_starts_with($inputName, $keyId.':')) {
+                    $columnNames[] = $valueTablePrefix.substr($inputName, strlen($keyId.':'));
+                    $columnValues[] = $inputValue;
+                }
+            }
             $statement = $db->prepare('
-                    INSERT INTO '.$valueTable.' ('.$valueColumn.') VALUES (?);
+                    INSERT INTO '.$valueTable.' ('.implode(',', $columnNames).') VALUES ('
+                .implode(',', array_fill(0, count($columnValues), '?')).
                 ');
-            $statement->execute([$finalValue]);
+            ');
+            $statement->execute($columnValues);
             $valueId = $db->lastInsertId();
         } else {
-            $valueId = $value;
+            $valueId = $value[$keyId];
         }
 
         //Link the value
@@ -305,12 +414,25 @@ class MetadataManager
             ');
         $statement->execute([$metadataOwnerId, $keyId, $valueId]);
         if ($datatype === 'object') {
+            echo "Saving object attributes:";
+            print_r($value[$keyId]);
             //Save all object attributes
-            foreach ($value as $attributeKeyId => $attributeValue) {
-                $this->addMetadataRecord($valueId, MetadataOwner::OBJECT, $attributeKeyId, $attributeValue);
+            foreach ($value[$keyId] as $attributeKeyId => $attributeValue) {
+                if (!str_contains($attributeKeyId, ':')) {
+                    $relatedValues = array_filter($value[$keyId], function($i) use ($attributeKeyId)
+                        { return str_starts_with($i, $attributeKeyId.':'); }, ARRAY_FILTER_USE_KEY);
+                    $relatedValues[$attributeKeyId] = $attributeValue;
+                    foreach ($value as $aki => $av) {
+                        if (str_starts_with($aki,$attributeKeyId.':')) {
+                            $relatedValues[$aki] = $av;
+                        }
+                    }
+                    echo "recursing with attributes:";
+                    print_r([$valueId, MetadataOwner::OBJECT, $attributeKeyId, $relatedValues]);
+                    $this->addMetadataRecord($valueId, MetadataOwner::OBJECT, $attributeKeyId, $relatedValues);
+                }
             }
         }
-
         return true;
     }
 }

@@ -1,23 +1,28 @@
-<h2>Informace o mikrobovi</h2>
+<?php
+function generateMetadataRow($metadataEntry) : string
+{
+    $html = '
+    <tr>
+        <td><b>'.$metadataEntry['key'].'</b></td>
+        <td>';
+    if ($metadataEntry['isObject']) {
+        $html .= '<table class="striped-table">';
+        foreach ($metadataEntry['value'] as $attribute) {
+            $html .= generateMetadataRow($attribute);
+        }
+        $html .= '</table>';
+    } else {
+            $html .= $metadataEntry['value'];
+    }
+    $html .= '
+        </td>
+    </tr>';
+    return $html;
+}
+?><h2>Informace o mikrobovi</h2>
 <table class="striped-table">
     <?php foreach ($microbe_metadata as $metadataEntry) : ?>
-        <tr>
-            <td><b><?= $metadataEntry['key'] ?></b></td>
-            <td>
-                <?php if ($metadataEntry['isObject']) : ?>
-                    <table class="striped-table">
-                        <?php foreach ($metadataEntry['value'] as $attribute) : ?>
-                            <tr>
-                                <td><b><?= $attribute['key'] ?></b></td>
-                                <td><?= $attribute['value'] ?></td>
-                            </tr>
-                        <?php endforeach ?>
-                    </table>
-                <?php else : ?>
-                    <?= $metadataEntry['value'] ?>
-                <?php endif ?>
-            </td>
-        </tr>
+        <?= generateMetadataRow($metadataEntry); ?>
     <?php endforeach ?>
     <tr><td colspan="2">&nbsp;</td></tr>
     <tr><td colspan="2"><b>Původce následujících onemocnění</b></td></tr>
